@@ -1,0 +1,215 @@
+import tkinter as tk
+import random
+import pygame
+import os
+from PIL import Image, ImageTk
+
+# Couleurs
+NOIR = "#1a0000"
+ROUGE = "#ff3366"
+BLANC = "#ffffff"
+ROSE = "#ff99cc"
+
+# Fenêtre principale
+fenetre = tk.Tk()
+fenetre.title("Pour ma Tsiky ❤️")
+fenetre.geometry("500x650")
+fenetre.configure(bg=NOIR)
+fenetre.resizable(False, False)
+
+# Fond animé avec des cœurs
+canvas = tk.Canvas(
+    fenetre,
+    width=500,
+    height=650,
+    bg=NOIR,
+    highlightthickness=0
+)
+canvas.place(x=0, y=0)
+
+coeurs = []
+
+def creer_coeur():
+    x = random.randint(20, 480)
+    coeur = canvas.create_text(
+        x,
+        0,
+        text="❤️",
+        font=("Arial", 20)
+    )
+    coeurs.append(coeur)
+
+def animer_coeurs():
+    for coeur in coeurs[:]:
+        canvas.move(coeur, 0, 3)
+        position = canvas.coords(coeur)
+
+        if position and position[1] > 670:
+            canvas.delete(coeur)
+            coeurs.remove(coeur)
+
+    fenetre.after(50, animer_coeurs)
+
+def nouveau_coeur():
+    creer_coeur()
+    fenetre.after(600, nouveau_coeur)
+
+# Contenu principal : affiché au-dessus du fond
+contenu = tk.Frame(fenetre, bg=NOIR)
+contenu.place(relx=0.5, rely=0.5, anchor="center")
+
+titre = tk.Label(
+    contenu,
+    text="Pour ma Tsiky ❤️",
+    font=("Arial", 25, "bold"),
+    fg=ROUGE,
+    bg=NOIR
+)
+titre.pack(pady=8)
+
+sous_titre = tk.Label(
+    contenu,
+    text="Tu es une personne spéciale pour moi 💕",
+    font=("Arial", 12),
+    fg=BLANC,
+    bg=NOIR,
+    wraplength=420
+)
+sous_titre.pack(pady=8)
+# Photos de Tsiky ❤️
+dossier_photo = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "photo"
+)
+
+print("Dossier des photos :", os.listdir(dossier_photo))
+noms_photos = [
+    "image1.jpg",
+    "image2.jpg",
+    "image3.jpg"
+]
+
+images_tsiky = []
+
+cadre_photos = tk.Frame(contenu, bg=NOIR)
+cadre_photos.pack(pady=5)
+
+for nom in noms_photos:
+    chemin = os.path.join(dossier_photo, nom)
+
+    print("Je cherche la photo :", chemin)
+    image = Image.open(chemin)
+    print("Photo chargée :", nom)
+    image.thumbnail((100, 100))
+
+    photo = ImageTk.PhotoImage(image)
+    images_tsiky.append(photo)
+
+    label_photo = tk.Label(
+        cadre_photos,
+        image=photo,
+        bg=NOIR
+    )
+    label_photo.pack(side="left", padx=5)
+
+# Lettre toujours visible
+lettre_titre = tk.Label(
+    contenu,
+    text="💌 Mon zaza ❤️",
+    font=("Arial", 18, "bold"),
+    fg=ROSE,
+    bg=NOIR
+)
+lettre_titre.pack(pady=8)
+
+texte_lettre = (
+    "Tu as une place spéciale dans mon cœur.\n\n"
+    "Même lorsque nous sommes loin l'un de l'autre,\n"
+    "je garde de beaux souvenirs de nous.\n\n"
+    "J'espère que ce petit cadeau te fera sourire.\n\n"
+    "Je t'envoie tout mon amour. 💕\n\n"
+    "Ton amoureux ❤️"
+)
+
+lettre = tk.Label(
+    contenu,
+    text=texte_lettre,
+    font=("Arial", 11),
+    fg=BLANC,
+    bg=NOIR,
+    justify="center",
+    wraplength=440
+)
+lettre.pack(padx=10, pady=8)
+
+# Message surprise
+message = tk.Label(
+    contenu,
+    text="Une petite surprise pour toi ❤️",
+    font=("Arial", 11),
+    fg=ROSE,
+    bg=NOIR,
+    wraplength=420
+)
+message.pack(pady=8)
+
+messages = [
+    "Tsiky, tu occupes une place spéciale dans mon cœur ❤️",
+    "Même à distance, je pense à toi 💕",
+    "Ton sourire rend mes journées plus belles 😊",
+    "Je veux créer encore beaucoup de souvenirs avec toi 💌",
+    "Tu es ma petite surprise préférée ❤️"
+]
+
+def surprise():
+    message.config(text=random.choice(messages))
+
+# Bouton surprise
+bouton_surprise = tk.Button(
+    contenu,
+    text="❤️ Découvrir une surprise",
+    font=("Arial", 12, "bold"),
+    bg=ROUGE,
+    fg=BLANC,
+    activebackground=ROSE,
+    command=surprise
+)
+bouton_surprise.pack(pady=10)
+
+# Signature
+signature = tk.Label(
+    contenu,
+    text="Créé avec amour ❤️",
+    font=("Arial", 10),
+    fg=ROUGE,
+    bg=NOIR
+)
+signature.pack(pady=8)
+
+# Mettre le contenu au-dessus du fond animé
+contenu.lift()
+
+# Démarrer les animations
+animer_coeurs()
+nouveau_coeur()
+
+# Musique romantique pour Tsiky
+try:
+    pygame.mixer.init()
+
+    dossier = os.path.dirname(os.path.abspath(__file__))
+    chemin_musique = os.path.join(
+        dossier,
+        "musique",
+        "amour.mp3"
+    )
+
+    pygame.mixer.music.load(chemin_musique)
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
+
+except Exception as erreur:
+    print("Erreur musicale :", erreur)
+
+# Lancer l'application
+fenetre.mainloop()
